@@ -20,11 +20,12 @@ const router = express_1.default.Router();
 // To add URL parameters (Doable for any method! Not only for GET):
 // router.get('/:parameter1/:parameter2', f);
 router.get('/', controller_1.hello); // Example
-router.get('/users', controller_1.users);
-router.get('/users/:username', controller_1.userByUsername);
+// router.get('/users', users);
+// router.get('/users/:username', userByUsername);
 router.get('/regions', controller_1.regions);
 router.get('/region', controller_1.regionById);
 router.get('/cases', controller_1.casesByRegionId);
+router.get('/recipe', controller_1.recipe);
 router.get('/ranking', controller_1.ranking);
 router.get('/charts/bar', controller_1.barChart);
 router.get('/charts/line', controller_1.lineChart);

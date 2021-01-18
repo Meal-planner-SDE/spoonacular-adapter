@@ -49,3 +49,10 @@ export interface MPUser {
   address: string;
   shopping_list_id: number;
 }
+
+export interface Recipe {
+  id: number;
+  title: string;
+  image: string;
+  imageType: string;
+}

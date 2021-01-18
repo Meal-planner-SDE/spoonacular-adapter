@@ -18,12 +18,13 @@ import {
   getRanking,
   getRegionById,
   getRegions, getCasesByRegionId, getLineChart,
-  getUsers, getUserByUsername
+  searchRecipes
 } from './core';
 import {
   getDateFromRequest,
   getIdFromRequest,
   getNumberFromRequest,
+  getParameterFromRequest,
 } from './helper';
 
 //#region --- EXAMPLE ---
@@ -124,11 +125,9 @@ export const lineChart = async (req: Request, res: Response) => {
 
 //#endregion
 
-
-export const users = async (req: Request, res: Response) => {
-  res.send(await getUsers());
-};
-
-export const userByUsername = async (req: Request, res: Response) => {
-  res.send(await getUserByUsername(req.params.username));
+export const recipe = async (req: Request, res: Response) => {
+  const query = getParameterFromRequest(req, 'q');
+  if(query !== false){
+    res.send(await searchRecipes(query));
+  }
 };

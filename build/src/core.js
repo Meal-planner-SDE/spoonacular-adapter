@@ -23,9 +23,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserByUsername = exports.getUsers = exports.getLineChart = exports.getBarChart = exports.getRanking = exports.getCasesByRegionId = exports.getRegionById = exports.getRegions = exports.getHello = void 0;
+exports.searchRecipes = exports.getLineChart = exports.getBarChart = exports.getRanking = exports.getCasesByRegionId = exports.getRegionById = exports.getRegions = exports.getHello = void 0;
 const types_1 = require("./types");
-const dbUtils_1 = require("./dbUtils");
 const config_1 = __importDefault(require("../config"));
 const qs_1 = __importDefault(require("qs"));
 const axios_1 = __importDefault(require("axios"));
@@ -219,11 +218,22 @@ const getLineChart = (id, year, month) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getLineChart = getLineChart;
 //#endregion
-const getUsers = () => __awaiter(void 0, void 0, void 0, function* () {
+const searchRecipes = (query) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return dbUtils_1.queryDB('SELECT * FROM MP_USER;').then((users) => {
-            return users;
+        const recipes = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, {
+            params: {
+                apiKey: config_1.default.SPOONACULAR_KEY,
+                query: query,
+                number: 2
+            }
         });
+        const result = recipes.data.results;
+        console.log(result);
+        for (let item in result) {
+            console.log(result[item]);
+            console.log(result[item].id);
+        }
+        return result;
     }
     catch (e) {
         console.error(e);
@@ -232,18 +242,4 @@ const getUsers = () => __awaiter(void 0, void 0, void 0, function* () {
         };
     }
 });
-exports.getUsers = getUsers;
-const getUserByUsername = (username) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        return dbUtils_1.queryDB(`SELECT * FROM MP_USER WHERE username = '${username}';`).then((users) => {
-            return users[0];
-        });
-    }
-    catch (e) {
-        console.error(e);
-        return {
-            error: e.toString(),
-        };
-    }
-});
-exports.getUserByUsername = getUserByUsername;
+exports.searchRecipes = searchRecipes;

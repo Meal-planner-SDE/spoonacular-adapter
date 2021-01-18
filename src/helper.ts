@@ -32,6 +32,20 @@ export const getNumberFromRequest: (req: Request, param: string) => number | fal
   }
 };
 
+export const getParameterFromRequest: (req: Request, param: string) => string | false = (
+  req,
+  param
+) => {
+  let value = req.query[param];
+  try {
+    return String(value);
+  } catch (e) {
+    console.error(`Error extracting parameter ${param}:`, e);
+    return false;
+  }
+};
+
+
 /**
  * Extract id from the request query-string
  * @param req The request (as given in the controller)

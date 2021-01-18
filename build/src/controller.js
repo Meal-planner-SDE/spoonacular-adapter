@@ -19,7 +19,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userByUsername = exports.users = exports.lineChart = exports.barChart = exports.ranking = exports.casesByRegionId = exports.regionById = exports.regions = exports.hello = void 0;
+exports.recipe = exports.lineChart = exports.barChart = exports.ranking = exports.casesByRegionId = exports.regionById = exports.regions = exports.hello = void 0;
 const types_1 = require("./types");
 const core_1 = require("./core");
 const helper_1 = require("./helper");
@@ -112,11 +112,10 @@ const lineChart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.lineChart = lineChart;
 //#endregion
-const users = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield core_1.getUsers());
+const recipe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const query = helper_1.getParameterFromRequest(req, 'q');
+    if (query !== false) {
+        res.send(yield core_1.searchRecipes(query));
+    }
 });
-exports.users = users;
-const userByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield core_1.getUserByUsername(req.params.username));
-});
-exports.userByUsername = userByUsername;
+exports.recipe = recipe;

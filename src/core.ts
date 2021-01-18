@@ -10,12 +10,12 @@
  *   It really depends on your project, style and personal preference :)
  */
 
-import { CasesPerRegion, Entry, Error, isError, Region, MPUser } from './types';
-import { queryDB } from './dbUtils';
+import { CasesPerRegion, Entry, Error, isError, Region, Recipe } from './types';
 import config from '../config';
 import qs from 'qs';
 
 import axios from 'axios';
+import { recipe } from './controller';
 // import secrets from '../secrets';
 axios.defaults.paramsSerializer = (params) => {
   return qs.stringify(params, { indices: false });
@@ -241,25 +241,22 @@ export const getLineChart: (
 
 //#endregion
 
-
-export const getUsers: () => Promise<MPUser[] | Error> = async () => {
+export const searchRecipes: (query : string) => Promise<Recipe[] | Error> = async (query) => {
   try {
-    return queryDB('SELECT * FROM MP_USER;').then((users) => {
-      return users as MPUser[];
+    const recipes = await axios.get<{results : Recipe[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, {
+      params: {
+        apiKey: config.SPOONACULAR_KEY,
+        query: query,
+        number: 2
+      }
     });
-  } catch (e) {
-    console.error(e);
-    return {
-      error: e.toString(),
-    };
-  }
-};
-
-export const getUserByUsername: (username : string) => Promise<MPUser | Error> = async (username) => {
-  try {
-    return queryDB(`SELECT * FROM MP_USER WHERE username = '${username}';`).then((users) => {
-      return users[0] as MPUser;
-    });
+    const result = recipes.data.results as Recipe[];
+    // console.log(result);
+    // for(let item in result){
+    //   console.log(result[item]);
+    //   console.log(result[item].id);
+    // }
+    return result;
   } catch (e) {
     console.error(e);
     return {
