@@ -26,6 +26,8 @@ router.get('/regions', controller_1.regions);
 router.get('/region', controller_1.regionById);
 router.get('/cases', controller_1.casesByRegionId);
 router.get('/recipe', controller_1.recipe);
+router.get('/recipe/:id', controller_1.recipeInformation);
+router.get('/ingredient/:id', controller_1.ingredientById);
 router.get('/ranking', controller_1.ranking);
 router.get('/charts/bar', controller_1.barChart);
 router.get('/charts/line', controller_1.lineChart);

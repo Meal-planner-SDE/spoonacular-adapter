@@ -6,7 +6,7 @@
  *   of the other files.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentDate = exports.getDateFromRequest = exports.getIdFromRequest = exports.getParameterFromRequest = exports.getNumberFromRequest = void 0;
+exports.getCurrentDate = exports.getDateFromRequest = exports.getIdFromRequest = exports.getParameterFromRequest = exports.getIdParameter = exports.getNumberFromRequest = exports.getNumberParameterFromRequest = void 0;
 /**
  * Extract a specific parameter from the query-string
  * @param req The request (as given in the controller)
@@ -14,6 +14,20 @@ exports.getCurrentDate = exports.getDateFromRequest = exports.getIdFromRequest =
  * @return the value of the parameter if the parameter is
  * correct and available, false otherwise
  */
+const getNumberParameterFromRequest = (req, param) => {
+    let value = req.params.n;
+    if (typeof value !== 'string') {
+        return false;
+    }
+    try {
+        return parseInt(value);
+    }
+    catch (e) {
+        console.error(`Error extracting number parameter:`, e);
+        return false;
+    }
+};
+exports.getNumberParameterFromRequest = getNumberParameterFromRequest;
 const getNumberFromRequest = (req, param) => {
     let value = req.query[param];
     if (typeof value !== 'string') {
@@ -28,6 +42,20 @@ const getNumberFromRequest = (req, param) => {
     }
 };
 exports.getNumberFromRequest = getNumberFromRequest;
+const getIdParameter = (req) => {
+    let value = req.params.id;
+    if (typeof value !== 'string') {
+        return false;
+    }
+    try {
+        return parseInt(value);
+    }
+    catch (e) {
+        console.error(`Error extracting id parameter:`, e);
+        return false;
+    }
+};
+exports.getIdParameter = getIdParameter;
 const getParameterFromRequest = (req, param) => {
     let value = req.query[param];
     try {

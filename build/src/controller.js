@@ -19,7 +19,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.recipe = exports.lineChart = exports.barChart = exports.ranking = exports.casesByRegionId = exports.regionById = exports.regions = exports.hello = void 0;
+exports.ingredientById = exports.recipeInformation = exports.recipe = exports.lineChart = exports.barChart = exports.ranking = exports.casesByRegionId = exports.regionById = exports.regions = exports.hello = void 0;
 const types_1 = require("./types");
 const core_1 = require("./core");
 const helper_1 = require("./helper");
@@ -114,8 +114,28 @@ exports.lineChart = lineChart;
 //#endregion
 const recipe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const query = helper_1.getParameterFromRequest(req, 'q');
+    let diet = helper_1.getParameterFromRequest(req, 'diet');
+    let n = helper_1.getNumberFromRequest(req, 'n');
     if (query !== false) {
-        res.send(yield core_1.searchRecipes(query));
+        if (diet === false)
+            diet = "omni";
+        if (n === false)
+            n = 2;
+        res.send(yield core_1.searchRecipes(query, diet, n));
     }
 });
 exports.recipe = recipe;
+const recipeInformation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let id = helper_1.getIdParameter(req);
+    if (id !== false) {
+        res.send(yield core_1.getRecipeInformation(id));
+    }
+});
+exports.recipeInformation = recipeInformation;
+const ingredientById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let id = helper_1.getIdParameter(req);
+    if (id !== false) {
+        res.send(yield core_1.getIngredientById(id));
+    }
+});
+exports.ingredientById = ingredientById;

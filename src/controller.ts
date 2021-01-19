@@ -18,12 +18,16 @@ import {
   getRanking,
   getRegionById,
   getRegions, getCasesByRegionId, getLineChart,
-  searchRecipes
+  searchRecipes,
+  getRecipeInformation,
+  getIngredientById
 } from './core';
 import {
   getDateFromRequest,
   getIdFromRequest,
+  getIdParameter,
   getNumberFromRequest,
+  getNumberParameterFromRequest,
   getParameterFromRequest,
 } from './helper';
 
@@ -127,7 +131,23 @@ export const lineChart = async (req: Request, res: Response) => {
 
 export const recipe = async (req: Request, res: Response) => {
   const query = getParameterFromRequest(req, 'q');
+  let diet = getParameterFromRequest(req, 'diet') || "omni";
+  let n = getNumberFromRequest(req, 'n') || 1;
   if(query !== false){
-    res.send(await searchRecipes(query));
+    res.send(await searchRecipes(query, diet, n));
+  }
+};
+
+export const recipeInformation = async (req: Request, res: Response) => {
+  let id = getIdParameter(req);
+  if (id !== false) {
+    res.send(await getRecipeInformation(id));
+  }
+};
+
+export const ingredientById = async (req: Request, res: Response) => {
+  let id = getIdParameter(req);
+  if (id !== false) {
+    res.send(await getIngredientById(id));
   }
 };

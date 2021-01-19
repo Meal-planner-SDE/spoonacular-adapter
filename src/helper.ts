@@ -6,6 +6,7 @@
  */
 
 import { Request } from 'express';
+import { Recipe } from './types';
 
 /**
  * Extract a specific parameter from the query-string
@@ -14,6 +15,24 @@ import { Request } from 'express';
  * @return the value of the parameter if the parameter is
  * correct and available, false otherwise
  */
+export const getNumberParameterFromRequest: (req: Request, param: string) => number | false = (
+  req,
+  param
+) => {
+  let value = req.params.n;
+
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  try {
+    return parseInt(value);
+  } catch (e) {
+    console.error(`Error extracting number parameter:`, e);
+    return false;
+  }
+};
+
 export const getNumberFromRequest: (req: Request, param: string) => number | false = (
   req,
   param
@@ -28,6 +47,23 @@ export const getNumberFromRequest: (req: Request, param: string) => number | fal
     return parseInt(value);
   } catch (e) {
     console.error(`Error extracting parameter ${param}:`, e);
+    return false;
+  }
+};
+
+export const getIdParameter: (req: Request) => number | false = (
+  req
+) => {
+  let value = req.params.id;
+
+  if (typeof value !== 'string') {
+    return false;
+  }
+
+  try {
+    return parseInt(value);
+  } catch (e) {
+    console.error(`Error extracting id parameter:`, e);
     return false;
   }
 };

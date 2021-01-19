@@ -18,7 +18,9 @@ import {
   barChart,
   casesByRegionId,
   lineChart,
-  recipe
+  recipe,
+  recipeInformation,
+  ingredientById
 } from './controller';
 
 const router = express.Router();
@@ -37,6 +39,10 @@ router.get('/region', regionById);
 router.get('/cases', casesByRegionId);
 
 router.get('/recipe', recipe);
+router.get('/recipe/:id', recipeInformation);
+
+router.get('/ingredient/:id', ingredientById);
+
 
 router.get('/ranking', ranking);
 

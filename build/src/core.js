@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchRecipes = exports.getLineChart = exports.getBarChart = exports.getRanking = exports.getCasesByRegionId = exports.getRegionById = exports.getRegions = exports.getHello = void 0;
+exports.getIngredientById = exports.getRecipeInformation = exports.searchRecipes = exports.getLineChart = exports.getBarChart = exports.getRanking = exports.getCasesByRegionId = exports.getRegionById = exports.getRegions = exports.getHello = void 0;
 const types_1 = require("./types");
 const config_1 = __importDefault(require("../config"));
 const qs_1 = __importDefault(require("qs"));
@@ -218,20 +218,20 @@ const getLineChart = (id, year, month) => __awaiter(void 0, void 0, void 0, func
 });
 exports.getLineChart = getLineChart;
 //#endregion
-const searchRecipes = (query) => __awaiter(void 0, void 0, void 0, function* () {
+const searchRecipes = (query, diet, number) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const recipes = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, {
             params: {
                 apiKey: config_1.default.SPOONACULAR_KEY,
                 query: query,
-                number: 2
+                number: number,
+                diet: diet
             }
         });
-        const result = recipes.data.results;
-        console.log(result);
-        for (let item in result) {
-            console.log(result[item]);
-            console.log(result[item].id);
+        return recipes.data.results.map((recipe) => new types_1.Recipe(recipe));
+        let result = [];
+        for (const element of recipes.data.results) {
+            result.push(new types_1.Recipe(element));
         }
         return result;
     }
@@ -243,3 +243,37 @@ const searchRecipes = (query) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.searchRecipes = searchRecipes;
+const getRecipeInformation = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/${id}/information`, {
+            params: {
+                apiKey: config_1.default.SPOONACULAR_KEY
+            }
+        });
+        return new types_1.Recipe(response.data);
+    }
+    catch (e) {
+        console.error(e);
+        return {
+            error: e.toString(),
+        };
+    }
+});
+exports.getRecipeInformation = getRecipeInformation;
+const getIngredientById = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const response = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/food/ingredients/${id}/information`, {
+            params: {
+                apiKey: config_1.default.SPOONACULAR_KEY
+            }
+        });
+        return new types_1.Ingredient(response.data);
+    }
+    catch (e) {
+        console.error(e);
+        return {
+            error: e.toString(),
+        };
+    }
+});
+exports.getIngredientById = getIngredientById;
