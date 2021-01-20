@@ -6,7 +6,7 @@
  *   of the other files.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentDate = exports.getDateFromRequest = exports.getIdFromRequest = exports.getParameterFromRequest = exports.getIdParameter = exports.getNumberFromRequest = exports.getNumberParameterFromRequest = void 0;
+exports.getIdFromRequest = exports.getParameterFromRequest = exports.getIdParameter = exports.getNumberFromRequest = exports.getNumberParameterFromRequest = void 0;
 /**
  * Extract a specific parameter from the query-string
  * @param req The request (as given in the controller)
@@ -28,6 +28,13 @@ const getNumberParameterFromRequest = (req, param) => {
     }
 };
 exports.getNumberParameterFromRequest = getNumberParameterFromRequest;
+/**
+ * Parse a number parameter from a query
+ * @param req The request (as given in the controller)
+ * @param param The name of the number parameter to get
+ * @return the value of the parameter if the parameter is
+ * correct and available, false otherwise
+ */
 const getNumberFromRequest = (req, param) => {
     let value = req.query[param];
     if (typeof value !== 'string') {
@@ -42,6 +49,11 @@ const getNumberFromRequest = (req, param) => {
     }
 };
 exports.getNumberFromRequest = getNumberFromRequest;
+/**
+ * Get the "id" parameter from a query
+ * @param req The request (as given in the controller)
+ * @return the id if it is correct and available, false otherwise
+ */
 const getIdParameter = (req) => {
     let value = req.params.id;
     if (typeof value !== 'string') {
@@ -56,6 +68,13 @@ const getIdParameter = (req) => {
     }
 };
 exports.getIdParameter = getIdParameter;
+/**
+ * Get a parameter from the query
+ * @param req The request (as given in the controller)
+ * @param param The parameter to get from the request
+ * @return the value of the parameter if the parameter is
+ * correct and available, false otherwise
+ */
 const getParameterFromRequest = (req, param) => {
     let value = req.query[param];
     try {
@@ -77,45 +96,3 @@ const getIdFromRequest = (req) => {
     return exports.getNumberFromRequest(req, 'id');
 };
 exports.getIdFromRequest = getIdFromRequest;
-/**
- * Extract day, month and year from the request query-string
- * @param req The request (as given in the controller)
- * @return an object containing day, month and year parameters
- * if the parameter for the day/month/year is not available,
- * the current day/month/year will be used
- */
-const getDateFromRequest = (req) => {
-    let day = exports.getNumberFromRequest(req, 'd');
-    let month = exports.getNumberFromRequest(req, 'm');
-    let year = exports.getNumberFromRequest(req, 'y');
-    const currentDate = exports.getCurrentDate();
-    if (day === false) {
-        day = currentDate.day;
-    }
-    if (month === false) {
-        month = currentDate.month;
-    }
-    if (year === false) {
-        year = currentDate.year;
-    }
-    return {
-        day: day,
-        month: month,
-        year: year,
-    };
-};
-exports.getDateFromRequest = getDateFromRequest;
-/**
- * Returns the current day
- * @return an object containing day, month and years parameters
- * representing the current date (today)
- */
-const getCurrentDate = () => {
-    const date = new Date();
-    return {
-        day: date.getDate(),
-        month: date.getMonth() + 1,
-        year: date.getFullYear(),
-    };
-};
-exports.getCurrentDate = getCurrentDate;

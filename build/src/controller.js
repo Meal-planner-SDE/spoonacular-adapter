@@ -19,110 +19,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ingredientById = exports.recipeInformation = exports.recipe = exports.lineChart = exports.barChart = exports.ranking = exports.casesByRegionId = exports.regionById = exports.regions = exports.hello = void 0;
-const types_1 = require("./types");
+exports.convert = exports.ingredient = exports.recipeInformation = exports.recipe = void 0;
 const core_1 = require("./core");
 const helper_1 = require("./helper");
-//#region --- EXAMPLE ---
-const hello = (req, res) => {
-    // If in the URL (GET request) e.g. localhost:8080/?name=pippo
-    const name = req.query['name'];
-    // If in body of the request (as json or form-data)
-    // const name = req.body['name'];
-    // If in the URL as a parameter e.g. localhost:8080/pippo/ and route defined as '/:name'
-    // const name = req.params['name'];
-    if (name != null && typeof name === 'string') {
-        res.send(core_1.getHello(name));
-    }
-    else {
-        res.status(400);
-        res.send({ error: 'Invalid name format!' });
-    }
-};
-exports.hello = hello;
-//#endregion
-//#region --- REGIONS and CASES ---
-const regions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.send(yield core_1.getRegions());
-});
-exports.regions = regions;
-const regionById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = helper_1.getIdFromRequest(req);
-    if (id !== false) {
-        res.send(yield core_1.getRegionById(id));
-    }
-    else {
-        res.status(400);
-        res.send({ error: 'Invalid ID format!' });
-    }
-});
-exports.regionById = regionById;
-const casesByRegionId = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = helper_1.getIdFromRequest(req);
-    if (id !== false) {
-        const date = helper_1.getDateFromRequest(req);
-        res.send(yield core_1.getCasesByRegionId(id, date.year, date.month, date.day));
-    }
-    else {
-        res.status(400);
-        res.send({ error: 'Invalid ID format!' });
-    }
-});
-exports.casesByRegionId = casesByRegionId;
-//#endregion
-//#region --- LOCAL ELABORATIONS ---
-const ranking = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const date = helper_1.getDateFromRequest(req);
-    let n = helper_1.getNumberFromRequest(req, 'n');
-    if (n === false) {
-        n = 5;
-    }
-    let ord = req.query['ord'];
-    if (ord !== 'asc') {
-        ord = 'desc';
-    }
-    res.send(yield core_1.getRanking(n, ord, date.year, date.month, date.day));
-});
-exports.ranking = ranking;
-//#endregion
-//#region --- CHARTS ---
-const barChart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const date = helper_1.getDateFromRequest(req);
-    const chart = yield core_1.getBarChart(date.year, date.month, date.day);
-    if (!types_1.isError(chart)) {
-        res.contentType('image/png');
-    }
-    res.send(chart);
-});
-exports.barChart = barChart;
-const lineChart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = helper_1.getIdFromRequest(req);
-    if (id !== false) {
-        const date = helper_1.getDateFromRequest(req);
-        const chart = yield core_1.getLineChart(id, date.year, date.month);
-        if (!types_1.isError(chart)) {
-            res.contentType('image/png');
-        }
-        res.send(chart);
-    }
-    else {
-        res.status(400);
-        res.send({ error: 'Invalid ID format!' });
-    }
-});
-exports.lineChart = lineChart;
-//#endregion
 const recipe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const query = helper_1.getParameterFromRequest(req, 'q');
-    let diet = helper_1.getParameterFromRequest(req, 'diet');
-    let n = helper_1.getNumberFromRequest(req, 'n');
-    if (query !== false) {
-        if (diet === false)
-            diet = "omni";
-        if (n === false)
-            n = 2;
-        res.send(yield core_1.searchRecipes(query, diet, n));
-    }
+    const query = helper_1.getParameterFromRequest(req, 'q') || "";
+    const diet = helper_1.getParameterFromRequest(req, 'diet') || "omni";
+    const n = helper_1.getNumberFromRequest(req, 'n') || 1;
+    const offset = helper_1.getNumberFromRequest(req, 'offset') || 0;
+    res.send(yield core_1.searchRecipes(query, diet, n, offset));
 });
 exports.recipe = recipe;
 const recipeInformation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -130,12 +35,32 @@ const recipeInformation = (req, res) => __awaiter(void 0, void 0, void 0, functi
     if (id !== false) {
         res.send(yield core_1.getRecipeInformation(id));
     }
+    else {
+        res.status(400);
+        res.send({ error: 'Invalid ID format!' });
+    }
 });
 exports.recipeInformation = recipeInformation;
-const ingredientById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const ingredient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let id = helper_1.getIdParameter(req);
     if (id !== false) {
         res.send(yield core_1.getIngredientById(id));
     }
+    else {
+        res.status(400);
+        res.send({ error: 'Invalid ID format!' });
+    }
 });
-exports.ingredientById = ingredientById;
+exports.ingredient = ingredient;
+const convert = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const ingredientName = helper_1.getParameterFromRequest(req, 'ingredientName') || "";
+    const sourceAmount = helper_1.getNumberFromRequest(req, 'sourceAmount') || 1;
+    const sourceUnit = helper_1.getParameterFromRequest(req, 'sourceUnit') || "g";
+    const targetUnit = helper_1.getParameterFromRequest(req, 'targetUnit') || "g";
+    const response = yield core_1.convertAmount(ingredientName, sourceAmount, sourceUnit, targetUnit);
+    if (response instanceof Error) {
+        res.status(400);
+    }
+    res.send(response);
+});
+exports.convert = convert;

@@ -11,42 +11,18 @@
 
 import express from 'express';
 import {
-  hello,
-  ranking,
-  regionById,
-  regions,
-  barChart,
-  casesByRegionId,
-  lineChart,
   recipe,
   recipeInformation,
-  ingredientById
+  ingredient,
+  convert
 } from './controller';
 
 const router = express.Router();
 
-// Possible methods: .get, .post, .put, .patch, .delete
-
-// To add URL parameters (Doable for any method! Not only for GET):
-// router.get('/:parameter1/:parameter2', f);
-
-router.get('/', hello); // Example
-
-// router.get('/users', users);
-// router.get('/users/:username', userByUsername);
-router.get('/regions', regions);
-router.get('/region', regionById);
-router.get('/cases', casesByRegionId);
-
 router.get('/recipe', recipe);
 router.get('/recipe/:id', recipeInformation);
 
-router.get('/ingredient/:id', ingredientById);
-
-
-router.get('/ranking', ranking);
-
-router.get('/charts/bar', barChart);
-router.get('/charts/line', lineChart);
+router.get('/ingredient/:id', ingredient);
+router.get('/convert', convert);
 
 export default router;

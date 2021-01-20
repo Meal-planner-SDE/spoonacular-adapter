@@ -4,11 +4,7 @@
  *   TypeScript interfaces and types should be defined here!
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Ingredient = exports.Recipe = exports.RecipeIngredient = exports.Measure = exports.isError = void 0;
-const isError = (arg) => {
-    return arg && arg.error;
-};
-exports.isError = isError;
+exports.Ingredient = exports.Recipe = exports.RecipeIngredient = exports.Measure = void 0;
 class Measure {
     constructor(measure) {
         this.amount = measure.amount;

@@ -11,143 +11,50 @@
 
 import { Request, Response } from 'express';
 
-import { isError } from './types';
 import {
-  getHello,
-  getBarChart,
-  getRanking,
-  getRegionById,
-  getRegions, getCasesByRegionId, getLineChart,
   searchRecipes,
   getRecipeInformation,
-  getIngredientById
+  getIngredientById,
+  convertAmount
 } from './core';
 import {
-  getDateFromRequest,
-  getIdFromRequest,
   getIdParameter,
   getNumberFromRequest,
-  getNumberParameterFromRequest,
   getParameterFromRequest,
 } from './helper';
 
-//#region --- EXAMPLE ---
-
-export const hello = (req: Request, res: Response) => {
-  // If in the URL (GET request) e.g. localhost:8080/?name=pippo
-  const name = req.query['name'];
-
-  // If in body of the request (as json or form-data)
-  // const name = req.body['name'];
-
-  // If in the URL as a parameter e.g. localhost:8080/pippo/ and route defined as '/:name'
-  // const name = req.params['name'];
-
-  if (name != null && typeof name === 'string') {
-    res.send(getHello(name));
-  } else {
-    res.status(400);
-    res.send({ error: 'Invalid name format!' });
-  }
-};
-
-//#endregion
-
-//#region --- REGIONS and CASES ---
-
-export const regions = async (req: Request, res: Response) => {
-  res.send(await getRegions());
-};
-
-export const regionById = async (req: Request, res: Response) => {
-  const id = getIdFromRequest(req);
-  if (id !== false) {
-    res.send(await getRegionById(id));
-  } else {
-    res.status(400);
-    res.send({ error: 'Invalid ID format!' });
-  }
-};
-
-export const casesByRegionId = async (req: Request, res: Response) => {
-  const id = getIdFromRequest(req);
-  if (id !== false) {
-    const date = getDateFromRequest(req);
-    res.send(await getCasesByRegionId(id, date.year, date.month, date.day));
-  } else {
-    res.status(400);
-    res.send({ error: 'Invalid ID format!' });
-  }
-};
-
-//#endregion
-
-//#region --- LOCAL ELABORATIONS ---
-
-export const ranking = async (req: Request, res: Response) => {
-  const date = getDateFromRequest(req);
-  let n = getNumberFromRequest(req, 'n');
-  if (n === false) {
-    n = 5;
-  }
-  let ord = req.query['ord'];
-  if (ord !== 'asc') {
-    ord = 'desc';
-  }
-  res.send(await getRanking(n, ord, date.year, date.month, date.day));
-};
-
-//#endregion
-
-//#region --- CHARTS ---
-
-export const barChart = async (req: Request, res: Response) => {
-  const date = getDateFromRequest(req);
-
-  const chart = await getBarChart(date.year, date.month, date.day);
-  if (!isError(chart)) {
-    res.contentType('image/png');
-  }
-  res.send(chart);
-};
-
-export const lineChart = async (req: Request, res: Response) => {
-  const id = getIdFromRequest(req);
-  if (id !== false) {
-    const date = getDateFromRequest(req);
-
-    const chart = await getLineChart(id, date.year, date.month);
-    if (!isError(chart)) {
-      res.contentType('image/png');
-    }
-    res.send(chart);
-  } else {
-    res.status(400);
-    res.send({ error: 'Invalid ID format!' });
-  }
-};
-
-//#endregion
-
 export const recipe = async (req: Request, res: Response) => {
-  const query = getParameterFromRequest(req, 'q');
-  let diet = getParameterFromRequest(req, 'diet') || "omni";
-  let n = getNumberFromRequest(req, 'n') || 1;
-  if(query !== false){
-    res.send(await searchRecipes(query, diet, n));
-  }
+  const query = getParameterFromRequest(req, 'q')     || "";
+  const diet = getParameterFromRequest(req, 'diet')   || "omni";
+  const n = getNumberFromRequest(req, 'n')            || 1;
+  const offset = getNumberFromRequest(req, 'offset')  || 0;
+  res.send(await searchRecipes(query, diet, n, offset));
 };
 
 export const recipeInformation = async (req: Request, res: Response) => {
   let id = getIdParameter(req);
   if (id !== false) {
     res.send(await getRecipeInformation(id));
+  } else {
+    res.status(400);
+    res.send({ error: 'Invalid ID format!' });
   }
 };
 
-export const ingredientById = async (req: Request, res: Response) => {
+export const ingredient = async (req: Request, res: Response) => {
   let id = getIdParameter(req);
   if (id !== false) {
     res.send(await getIngredientById(id));
+  } else {
+    res.status(400);
+    res.send({ error: 'Invalid ID format!' });
   }
+};
+
+export const convert = async (req: Request, res: Response) => {
+  const ingredientName = getParameterFromRequest(req, 'ingredientName') || "";
+  const sourceAmount = getNumberFromRequest(req, 'sourceAmount')        || 1;
+  const sourceUnit = getParameterFromRequest(req, 'sourceUnit')         || "g";
+  const targetUnit = getParameterFromRequest(req, 'targetUnit')         || "g";
+  res.send(await convertAmount(ingredientName, sourceAmount, sourceUnit, targetUnit));
 };

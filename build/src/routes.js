@@ -16,19 +16,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const controller_1 = require("./controller");
 const router = express_1.default.Router();
-// Possible methods: .get, .post, .put, .patch, .delete
-// To add URL parameters (Doable for any method! Not only for GET):
-// router.get('/:parameter1/:parameter2', f);
-router.get('/', controller_1.hello); // Example
-// router.get('/users', users);
-// router.get('/users/:username', userByUsername);
-router.get('/regions', controller_1.regions);
-router.get('/region', controller_1.regionById);
-router.get('/cases', controller_1.casesByRegionId);
 router.get('/recipe', controller_1.recipe);
 router.get('/recipe/:id', controller_1.recipeInformation);
-router.get('/ingredient/:id', controller_1.ingredientById);
-router.get('/ranking', controller_1.ranking);
-router.get('/charts/bar', controller_1.barChart);
-router.get('/charts/line', controller_1.lineChart);
+router.get('/ingredient/:id', controller_1.ingredient);
+router.get('/convert', controller_1.convert);
 exports.default = router;
