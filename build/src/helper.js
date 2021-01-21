@@ -78,7 +78,8 @@ exports.getIdParameter = getIdParameter;
 const getParameterFromRequest = (req, param) => {
     let value = req.query[param];
     try {
-        return String(value);
+        console.log(value);
+        return value === undefined ? "" : value;
     }
     catch (e) {
         console.error(`Error extracting parameter ${param}:`, e);

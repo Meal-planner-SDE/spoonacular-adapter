@@ -90,9 +90,9 @@ export const getParameterFromRequest: (req: Request, param: string) => string | 
   req,
   param
 ) => {
-  let value = req.query[param];
+  let value = req.query[param] as string;
   try {
-    return String(value);
+    return value === undefined? "" : value;
   } catch (e) {
     console.error(`Error extracting parameter ${param}:`, e);
     return false;

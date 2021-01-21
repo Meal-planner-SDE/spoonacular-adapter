@@ -94,7 +94,7 @@ export const getIngredientById: (id : number) => Promise<Ingredient| Error> = as
  * @param targetUnit target unit
  * @return an object with a targetAmount described in targetUnit if everything went correctly, otherwise an Error
  */
-export const convertAmount: (ingredientName: string, sourceAmount: number, sourceUnit: string, targetUnit: string) => Promise<Object| Error> = async (ingredientName, sourceAmount, sourceUnit, targetUnit) => {
+export const convertAmount: (ingredientName: string, sourceAmount: number, sourceUnit: string, targetUnit: string) => Promise<Object | Error> = async (ingredientName, sourceAmount, sourceUnit, targetUnit) => {
   try {
     const response = await axios.get<Amount>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/convert`, {
       params: {

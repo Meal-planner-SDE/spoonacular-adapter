@@ -57,10 +57,6 @@ const convert = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const sourceAmount = helper_1.getNumberFromRequest(req, 'sourceAmount') || 1;
     const sourceUnit = helper_1.getParameterFromRequest(req, 'sourceUnit') || "g";
     const targetUnit = helper_1.getParameterFromRequest(req, 'targetUnit') || "g";
-    const response = yield core_1.convertAmount(ingredientName, sourceAmount, sourceUnit, targetUnit);
-    if (response instanceof Error) {
-        res.status(400);
-    }
-    res.send(response);
+    res.send(yield core_1.convertAmount(ingredientName, sourceAmount, sourceUnit, targetUnit));
 });
 exports.convert = convert;
