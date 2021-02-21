@@ -10,14 +10,38 @@
  *   It really depends on your project, style and personal preference :)
  */
 
-import { Error, Recipe, Ingredient, RecipeRaw, IngredientRaw, Amount} from './types';
+import { Error, Recipe, Ingredient, RecipeRaw, IngredientRaw, Amount, Params} from './types';
 import config from '../config';
 import qs from 'qs';
 
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { response } from 'express';
+import { isError } from 'util';
 axios.defaults.paramsSerializer = (params) => {
   return qs.stringify(params, { indices: false });
 };
+
+let fresh_keys = config.SPOONACULAR_KEYS
+
+const make_request: <T>(url:string, params : Params) => Promise<AxiosResponse<T> > = 
+  async <T>(url: string, params : Params) => {
+  let response:AxiosResponse<T> = {} as AxiosResponse<any>;
+  let status_code = 402;
+  while(status_code == 402 && fresh_keys.length > 0){
+    const random_key_index = Math.floor(Math.random() * fresh_keys.length);
+    params.apiKey = fresh_keys[random_key_index];
+    console.log("selected key:", params.apiKey)
+    response = await axios.get(url, {
+      params: params
+    });
+    status_code = response.status;
+    if(status_code == 402){
+      console.log("key is used:", params.apiKey)
+      delete fresh_keys[random_key_index];
+    }
+  }
+  return response;
+}
 
 /**
  * Search for recipes matching a certain query
@@ -27,15 +51,16 @@ axios.defaults.paramsSerializer = (params) => {
  */
 export const searchRecipes: (query : string, diet: string, number: number, offset: number) => Promise<Recipe[] | Error> = async (query, diet, number, offset) => {
   try {
-    const recipes = await axios.get<{results : RecipeRaw[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, {
-      params: {
-        apiKey: config.SPOONACULAR_KEY,
-        query: query,
-        number: number,
-        diet: diet,
-        offset: offset
-      }
-    });
+    let params = {
+      apiKey: "",
+      query: query,
+      number: number,
+      diet: diet,
+      offset: offset
+    }
+    let recipes = await make_request<{results: RecipeRaw[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, params);
+
+    // const recipess = await axios.get<{results : RecipeRaw[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`);
     return recipes.data.results.map((recipe) => new Recipe(recipe));
   } catch (e) {
     console.error(e);
@@ -51,11 +76,10 @@ export const searchRecipes: (query : string, diet: string, number: number, offse
  */
 export const getRecipeInformation: (id : number) => Promise<Recipe| Error> = async (id) => {
   try {
-    const response = await axios.get<RecipeRaw>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/${id}/information`, {
-      params: {
-        apiKey: config.SPOONACULAR_KEY
-      }
-    });
+    let params = {
+      apiKey: ""
+    }
+    const response = await make_request<RecipeRaw>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/${id}/information`, params);
     return new Recipe(response.data);
   } catch (e) {
     console.error(e);
@@ -72,11 +96,10 @@ export const getRecipeInformation: (id : number) => Promise<Recipe| Error> = asy
  */
 export const getIngredientById: (id : number) => Promise<Ingredient| Error> = async (id) => {
   try {
-    const response = await axios.get<IngredientRaw>(`${config.SPOONACULAR_API_ENDPOINT}/food/ingredients/${id}/information`, {
-      params: {
-        apiKey: config.SPOONACULAR_KEY
-      }
-    });
+    let params = {
+      apiKey: ""
+    }
+    const response = await make_request<IngredientRaw>(`${config.SPOONACULAR_API_ENDPOINT}/food/ingredients/${id}/information`, params);
     return new Ingredient(response.data);
   } catch (e) {
     console.error(e);
@@ -96,15 +119,14 @@ export const getIngredientById: (id : number) => Promise<Ingredient| Error> = as
  */
 export const convertAmount: (ingredientName: string, sourceAmount: number, sourceUnit: string, targetUnit: string) => Promise<Object | Error> = async (ingredientName, sourceAmount, sourceUnit, targetUnit) => {
   try {
-    const response = await axios.get<Amount>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/convert`, {
-      params: {
-        apiKey: config.SPOONACULAR_KEY,
-        ingredientName: ingredientName,
-        sourceAmount: sourceAmount,
-        sourceUnit: sourceUnit,
-        targetUnit: targetUnit
-      }
-    });
+    let params = {
+      apiKey: "",
+      ingredientName: ingredientName,
+      sourceAmount: sourceAmount,
+      sourceUnit: sourceUnit,
+      targetUnit: targetUnit
+    };
+    const response = await make_request<Amount>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/convert`, params);
     if(response.data.hasOwnProperty("status")){
       throw new Error("Cannot convert the amount.");
     }

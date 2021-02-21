@@ -59,6 +59,10 @@ export interface RecipeIngredientRaw {
   }
 }
 
+export interface Params {
+  apiKey: string
+}
+
 export class Recipe {
   recipe_id: number;
   title: string;
