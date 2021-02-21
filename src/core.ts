@@ -23,21 +23,28 @@ axios.defaults.paramsSerializer = (params) => {
 
 let fresh_keys = config.SPOONACULAR_KEYS
 
-const make_request: <T>(url:string, params : Params) => Promise<AxiosResponse<T> > = 
+const make_request: <T>(url:string, params : Params) => Promise<AxiosResponse<T>> = 
   async <T>(url: string, params : Params) => {
   let response:AxiosResponse<T> = {} as AxiosResponse<any>;
   let status_code = 402;
   while(status_code == 402 && fresh_keys.length > 0){
     const random_key_index = Math.floor(Math.random() * fresh_keys.length);
     params.apiKey = fresh_keys[random_key_index];
-    console.log("selected key:", params.apiKey)
-    response = await axios.get(url, {
-      params: params
-    });
-    status_code = response.status;
-    if(status_code == 402){
-      console.log("key is used:", params.apiKey)
-      delete fresh_keys[random_key_index];
+    console.log("selected key:", params.apiKey);
+    try{
+      response = await axios.get(url, {
+        params: params
+      });
+      status_code = response.status
+    }catch (e) {
+      status_code = e.response.status;
+      if(status_code == 402){
+        console.log("key is used:", params.apiKey)
+        delete fresh_keys[random_key_index];
+      }else{
+        console.error(e);
+        throw(e);
+      }
     }
   }
   return response;

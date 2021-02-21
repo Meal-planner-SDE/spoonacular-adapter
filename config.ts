@@ -7,6 +7,7 @@ export default {
     '249d41c2cb624364ae3c633b7e792ac0',
     '90c46043671349a3ae37de90c590f4b7',
     '9976c58c9b2b4d31b2db262ac22787de',
-    '753a348fa7e04d8ca99db50cb56c4061'
+    '753a348fa7e04d8ca99db50cb56c4061',
+    'e59c691ebf124d1980fdec1ad65ae269'
   ]
 }
