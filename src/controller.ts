@@ -20,6 +20,7 @@ import {
 import {
   getIdParameter,
   getNumberFromRequest,
+  getFloatFromRequest,
   getParameterFromRequest,
 } from './helper';
 
@@ -80,7 +81,7 @@ export const ingredient = async (req: Request, res: Response) => {
 
 export const convert = async (req: Request, res: Response) => {
   const ingredientName = getParameterFromRequest(req, 'ingredientName');
-  const sourceAmount = getNumberFromRequest(req, 'sourceAmount');
+  const sourceAmount = getFloatFromRequest(req, 'sourceAmount');
   const sourceUnit = getParameterFromRequest(req, 'sourceUnit') ;
   const targetUnit = getParameterFromRequest(req, 'targetUnit') ;
   let error_msg = "";

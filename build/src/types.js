@@ -4,7 +4,11 @@
  *   TypeScript interfaces and types should be defined here!
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Ingredient = exports.Recipe = exports.RecipeIngredient = exports.Measure = void 0;
+exports.Ingredient = exports.Recipe = exports.RecipeIngredient = exports.Measure = exports.isError = void 0;
+const isError = (arg) => {
+    return arg && arg.error;
+};
+exports.isError = isError;
 class Measure {
     constructor(measure) {
         this.amount = measure.amount;
@@ -25,7 +29,7 @@ class RecipeIngredient {
 exports.RecipeIngredient = RecipeIngredient;
 class Recipe {
     constructor(recipe) {
-        this.id = recipe.id;
+        this.recipe_id = recipe.id;
         this.title = recipe.title;
         this.image = recipe.image;
         this.imageType = recipe.imageType;

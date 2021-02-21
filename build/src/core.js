@@ -28,9 +28,45 @@ const types_1 = require("./types");
 const config_1 = __importDefault(require("../config"));
 const qs_1 = __importDefault(require("qs"));
 const axios_1 = __importDefault(require("axios"));
+// import { isError } from 'util';
 axios_1.default.defaults.paramsSerializer = (params) => {
     return qs_1.default.stringify(params, { indices: false });
 };
+let fresh_keys = config_1.default.SPOONACULAR_KEYS;
+/**
+ * Sends a request to a Spoonacular endpoint.
+ * It tries to used different API keys to
+ * prevent running out of Spoonacular points
+ * @param url url of the Spoonacular endpoint
+ * @param params object with params to pass
+ */
+const make_request = (url, params) => __awaiter(void 0, void 0, void 0, function* () {
+    let response = {};
+    let status_code = 402;
+    while (status_code == 402 && fresh_keys.length > 0) {
+        const random_key_index = Math.floor(Math.random() * fresh_keys.length);
+        params.apiKey = fresh_keys[random_key_index];
+        console.log("selected key:", params.apiKey);
+        try {
+            response = yield axios_1.default.get(url, {
+                params: params
+            });
+            status_code = response.status;
+        }
+        catch (e) {
+            status_code = e.response.status;
+            if (status_code == 402) {
+                console.log("key is used:", params.apiKey);
+                delete fresh_keys[random_key_index];
+            }
+            else {
+                console.error(e);
+                throw (e);
+            }
+        }
+    }
+    return response;
+});
 /**
  * Search for recipes matching a certain query
  * @param query the title of the recipes that should be matched
@@ -39,15 +75,15 @@ axios_1.default.defaults.paramsSerializer = (params) => {
  */
 const searchRecipes = (query, diet, number, offset) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const recipes = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, {
-            params: {
-                apiKey: config_1.default.SPOONACULAR_KEY,
-                query: query,
-                number: number,
-                diet: diet,
-                offset: offset
-            }
-        });
+        let params = {
+            apiKey: "",
+            query: query,
+            number: number,
+            diet: diet,
+            offset: offset
+        };
+        let recipes = yield make_request(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, params);
+        // const recipess = await axios.get<{results : RecipeRaw[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`);
         return recipes.data.results.map((recipe) => new types_1.Recipe(recipe));
     }
     catch (e) {
@@ -64,11 +100,10 @@ exports.searchRecipes = searchRecipes;
  */
 const getRecipeInformation = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/${id}/information`, {
-            params: {
-                apiKey: config_1.default.SPOONACULAR_KEY
-            }
-        });
+        let params = {
+            apiKey: ""
+        };
+        const response = yield make_request(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/${id}/information`, params);
         return new types_1.Recipe(response.data);
     }
     catch (e) {
@@ -86,11 +121,10 @@ exports.getRecipeInformation = getRecipeInformation;
  */
 const getIngredientById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/food/ingredients/${id}/information`, {
-            params: {
-                apiKey: config_1.default.SPOONACULAR_KEY
-            }
-        });
+        let params = {
+            apiKey: ""
+        };
+        const response = yield make_request(`${config_1.default.SPOONACULAR_API_ENDPOINT}/food/ingredients/${id}/information`, params);
         return new types_1.Ingredient(response.data);
     }
     catch (e) {
@@ -111,15 +145,14 @@ exports.getIngredientById = getIngredientById;
  */
 const convertAmount = (ingredientName, sourceAmount, sourceUnit, targetUnit) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const response = yield axios_1.default.get(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/convert`, {
-            params: {
-                apiKey: config_1.default.SPOONACULAR_KEY,
-                ingredientName: ingredientName,
-                sourceAmount: sourceAmount,
-                sourceUnit: sourceUnit,
-                targetUnit: targetUnit
-            }
-        });
+        let params = {
+            apiKey: "",
+            ingredientName: ingredientName,
+            sourceAmount: sourceAmount,
+            sourceUnit: sourceUnit,
+            targetUnit: targetUnit
+        };
+        const response = yield make_request(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/convert`, params);
         if (response.data.hasOwnProperty("status")) {
             throw new Error("Cannot convert the amount.");
         }

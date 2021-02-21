@@ -19,7 +19,17 @@ export const getNumberParameterFromRequest: (req: Request, param: string) => num
   param
 ) => {
   let value = req.params.n;
-  return parseInt(value);
+
+  if (typeof value !== 'string') {
+    return NaN;
+  }
+
+  try {
+    return parseInt(value);
+  } catch (e) {
+    console.error(`Error extracting number parameter:`, e);
+    return NaN;
+  }
 };
 
 /**
@@ -35,7 +45,43 @@ export const getNumberFromRequest: (req: Request, param: string) => number = (
 ) => {
   let value = req.query[param];
 
-  return parseInt(value);
+  if (typeof value !== 'string') {
+    return NaN;
+  }
+
+  try {
+    const result = parseInt(value);
+    return result;
+  } catch (e) {
+    console.error(`Error extracting parameter ${param}:`, e);
+    return NaN;
+  }
+};
+
+/**
+ * Parse a number parameter from a query
+ * @param req The request (as given in the controller)
+ * @param param The name of the number parameter to get
+ * @return the value of the parameter if the parameter is
+ * correct and available, false otherwise
+ */
+export const getFloatFromRequest: (req: Request, param: string) => number = (
+  req,
+  param
+) => {
+  let value = req.query[param];
+
+  if (typeof value !== 'string') {
+    return NaN;
+  }
+
+  try {
+    const result = parseFloat(value);
+    return result;
+  } catch (e) {
+    console.error(`Error extracting parameter ${param}:`, e);
+    return NaN;
+  }
 };
 
 /**
@@ -48,7 +94,16 @@ export const getIdParameter: (req: Request) => number  = (
 ) => {
   let value = req.params.id;
 
-  return parseInt(value);
+  if (typeof value !== 'string') {
+    return NaN;
+  }
+
+  try {
+    return parseInt(value);
+  } catch (e) {
+    console.error(`Error extracting id parameter:`, e);
+    return NaN;
+  }
 };
 
 /**
@@ -75,4 +130,27 @@ export const getParameterFromRequest: (req: Request, param: string) => string = 
  */
 export const getIdFromRequest: (req: Request) => number = (req) => {
   return getNumberFromRequest(req, 'id');
+};
+
+/**
+ * Get the "id" parameter from a query
+ * @param req The request (as given in the controller)
+ * @return the id if it is correct and available, false otherwise
+ */
+export const getNumberParameter: (req: Request, parameter: string) => number = (
+  req,
+  parameter
+) => {
+  let value = req.params[parameter];
+
+  if (typeof value !== 'string') {
+    return NaN;
+  }
+
+  try {
+    return parseInt(value);
+  } catch (e) {
+    console.error(`Error extracting id parameter:`, e);
+    return NaN;
+  }
 };
