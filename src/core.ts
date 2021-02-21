@@ -16,16 +16,23 @@ import qs from 'qs';
 
 import axios, { AxiosResponse } from 'axios';
 import { response } from 'express';
-import { isError } from 'util';
+// import { isError } from 'util';
 axios.defaults.paramsSerializer = (params) => {
   return qs.stringify(params, { indices: false });
 };
 
 let fresh_keys = config.SPOONACULAR_KEYS
 
+/**
+ * Sends a request to a Spoonacular endpoint. 
+ * It tries to used different API keys to 
+ * prevent running out of Spoonacular points 
+ * @param url url of the Spoonacular endpoint
+ * @param params object with params to pass
+ */
 const make_request: <T>(url:string, params : Params) => Promise<AxiosResponse<T>> = 
   async <T>(url: string, params : Params) => {
-  let response:AxiosResponse<T> = {} as AxiosResponse<any>;
+  let response:AxiosResponse<T> = {} as AxiosResponse<T>;
   let status_code = 402;
   while(status_code == 402 && fresh_keys.length > 0){
     const random_key_index = Math.floor(Math.random() * fresh_keys.length);

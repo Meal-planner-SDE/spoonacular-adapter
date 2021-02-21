@@ -14,22 +14,12 @@ import { Request } from 'express';
  * @return the value of the parameter if the parameter is
  * correct and available, false otherwise
  */
-export const getNumberParameterFromRequest: (req: Request, param: string) => number | false = (
+export const getNumberParameterFromRequest: (req: Request, param: string) => number = (
   req,
   param
 ) => {
   let value = req.params.n;
-
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  try {
-    return parseInt(value);
-  } catch (e) {
-    console.error(`Error extracting number parameter:`, e);
-    return false;
-  }
+  return parseInt(value);
 };
 
 /**
@@ -39,22 +29,13 @@ export const getNumberParameterFromRequest: (req: Request, param: string) => num
  * @return the value of the parameter if the parameter is
  * correct and available, false otherwise
  */
-export const getNumberFromRequest: (req: Request, param: string) => number | false = (
+export const getNumberFromRequest: (req: Request, param: string) => number = (
   req,
   param
 ) => {
   let value = req.query[param];
 
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  try {
-    return parseInt(value);
-  } catch (e) {
-    console.error(`Error extracting parameter ${param}:`, e);
-    return false;
-  }
+  return parseInt(value);
 };
 
 /**
@@ -62,21 +43,12 @@ export const getNumberFromRequest: (req: Request, param: string) => number | fal
  * @param req The request (as given in the controller)
  * @return the id if it is correct and available, false otherwise
  */
-export const getIdParameter: (req: Request) => number | false = (
+export const getIdParameter: (req: Request) => number  = (
   req
 ) => {
   let value = req.params.id;
 
-  if (typeof value !== 'string') {
-    return false;
-  }
-
-  try {
-    return parseInt(value);
-  } catch (e) {
-    console.error(`Error extracting id parameter:`, e);
-    return false;
-  }
+  return parseInt(value);
 };
 
 /**
@@ -86,17 +58,12 @@ export const getIdParameter: (req: Request) => number | false = (
  * @return the value of the parameter if the parameter is
  * correct and available, false otherwise
  */
-export const getParameterFromRequest: (req: Request, param: string) => string | false = (
+export const getParameterFromRequest: (req: Request, param: string) => string = (
   req,
   param
 ) => {
   let value = req.query[param] as string;
-  try {
-    return value === undefined? "" : value;
-  } catch (e) {
-    console.error(`Error extracting parameter ${param}:`, e);
-    return false;
-  }
+  return value;
 };
 
 
@@ -106,6 +73,6 @@ export const getParameterFromRequest: (req: Request, param: string) => string | 
  * @return the id if the parameter is correct and
  * available, false otherwise
  */
-export const getIdFromRequest: (req: Request) => number | false = (req) => {
+export const getIdFromRequest: (req: Request) => number = (req) => {
   return getNumberFromRequest(req, 'id');
 };
