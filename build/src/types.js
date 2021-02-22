@@ -48,6 +48,13 @@ class Recipe {
                 this.ingredients.push(new RecipeIngredient(ingredient));
             }
         }
+        this.calories = 0.0;
+        let nutrients = recipe.nutrition.nutrients;
+        for (let nutrient of nutrients) {
+            if (nutrient.name == "Calories") {
+                this.calories = nutrient.amount;
+            }
+        }
     }
 }
 exports.Recipe = Recipe;

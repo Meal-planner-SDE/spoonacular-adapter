@@ -80,7 +80,8 @@ const searchRecipes = (query, diet, number, offset) => __awaiter(void 0, void 0,
             query: query,
             number: number,
             diet: diet,
-            offset: offset
+            offset: offset,
+            addRecipeNutrition: true
         };
         let recipes = yield make_request(`${config_1.default.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, params);
         // const recipess = await axios.get<{results : RecipeRaw[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`);

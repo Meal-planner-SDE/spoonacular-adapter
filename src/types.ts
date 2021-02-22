@@ -91,7 +91,7 @@ export class Recipe {
     this.imageType = recipe.imageType;
     this.summary = recipe.summary;
     this.sourceUrl = recipe.sourceUrl;
-    this.servings = recipe.servings;
+    this.servings = recipe.servings || 1;
     this.readyInMinutes = recipe.readyInMinutes;
     this.pricePerServing = recipe.pricePerServing;
     this.glutenFree = recipe.glutenFree;
