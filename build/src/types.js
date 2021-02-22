@@ -35,7 +35,7 @@ class Recipe {
         this.imageType = recipe.imageType;
         this.summary = recipe.summary;
         this.sourceUrl = recipe.sourceUrl;
-        this.servings = recipe.servings;
+        this.servings = recipe.servings || 1;
         this.readyInMinutes = recipe.readyInMinutes;
         this.pricePerServing = recipe.pricePerServing;
         this.glutenFree = recipe.glutenFree;
@@ -49,10 +49,12 @@ class Recipe {
             }
         }
         this.calories = 0.0;
-        let nutrients = recipe.nutrition.nutrients;
-        for (let nutrient of nutrients) {
-            if (nutrient.name == "Calories") {
-                this.calories = nutrient.amount;
+        if (recipe.nutrition) {
+            let nutrients = recipe.nutrition.nutrients;
+            for (let nutrient of nutrients) {
+                if (nutrient.name == "Calories") {
+                    this.calories = nutrient.amount;
+                }
             }
         }
     }

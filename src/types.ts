@@ -105,10 +105,12 @@ export class Recipe {
       }
     }
     this.calories = 0.0;
-    let nutrients = recipe.nutrition.nutrients;
-    for (let nutrient of nutrients){
-      if (nutrient.name == "Calories"){
-        this.calories = nutrient.amount;
+      if (recipe.nutrition){
+      let nutrients = recipe.nutrition.nutrients;
+      for (let nutrient of nutrients){
+        if (nutrient.name == "Calories"){
+          this.calories = nutrient.amount;
+        }
       }
     }
   }
