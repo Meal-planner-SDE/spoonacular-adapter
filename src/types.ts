@@ -82,6 +82,7 @@ export class Recipe {
   vegan: boolean;
   vegetarian: boolean;
   instructions: string;
+  calories: number;
 
   constructor(recipe: RecipeRaw){
     this.recipe_id = recipe.id;
@@ -103,6 +104,13 @@ export class Recipe {
         this.ingredients.push(new RecipeIngredient(ingredient));
       }
     }
+    this.calories = 0.0;
+    let nutrients = recipe.nutrition.nutrients;
+    for (let nutrient of nutrients){
+      if (nutrient.name == "Calories"){
+        this.calories = nutrient.amount;
+      }
+    }
   }
 }
 
@@ -120,7 +128,15 @@ export interface RecipeRaw {
   glutenFree: boolean,
   vegan: boolean,
   vegetarian: boolean,
-  instructions: string
+  instructions: string,
+  nutrition: {
+    nutrients: {
+        name: string,
+        title: string,
+        amount: number,
+        unit: string
+    }[]
+  }
 }
 
 export class Ingredient {
