@@ -71,7 +71,8 @@ export const searchRecipes: (query : string, diet: string, number: number, offse
       number: number,
       diet: diet,
       offset: offset,
-      addRecipeNutrition: true
+      addRecipeNutrition: true,
+      instructionsRequired: true
     }
     let recipes = await make_request<{results: RecipeRaw[]}>(`${config.SPOONACULAR_API_ENDPOINT}/recipes/complexSearch`, params);
 
